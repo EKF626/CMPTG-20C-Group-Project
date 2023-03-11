@@ -62,7 +62,6 @@ public class Spawner : MonoBehaviour
         newEnemy.transform.position = _waypoint.GetWaypointPosition(0);
         Enemy enemyComponent = newEnemy.GetComponent<Enemy>();
         enemyComponent.Waypoint = _waypoint;
-        enemyComponent.AssignPosInWave(_enemiesSpawned);
         newEnemy.SetActive(true);
         Enemy.EnemyType type = enemyComponent.GetEnemyType();
         _typeCounters[(int)type] = _typeCounters[(int)type] + 1;

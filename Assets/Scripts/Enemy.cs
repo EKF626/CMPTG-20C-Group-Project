@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
     public Waypoint Waypoint {get; set;}
 
     private int _currentWaypointIndex = 1;
-    private int _posInWave;
+    private float _distanceTraveled;
     private SpriteRenderer _spriteRenderer;
 
     public static event Action<int> DropCoins;
@@ -47,7 +47,9 @@ public class Enemy : MonoBehaviour
     }
 
     private void Move() {
+        Vector3 oldPos = transform.position;
         transform.position = Vector3.MoveTowards(transform.position, CurrentPointPosition, CurrentSpeed*Time.deltaTime/20f);
+        _distanceTraveled += Vector3.Distance(oldPos, transform.position);
     }
 
     public void DealDamage(float damage) {
@@ -60,12 +62,8 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void AssignPosInWave(int position) {
-        _posInWave = position;
-    }
-
-    public int GetPosInWave() {
-        return _posInWave;
+    public float GetDistanceTraveled() {
+        return _distanceTraveled;
     }
 
     public EnemyType GetEnemyType() {

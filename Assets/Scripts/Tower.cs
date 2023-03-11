@@ -16,8 +16,8 @@ public class Tower : MonoBehaviour
     private void Update() {
         _fireTimer -= Time.deltaTime;
 
-        if (_enemiesInRange.Count > 0) {
-            _currentEnemy = _enemiesInRange[0];
+        _currentEnemy = GetCurrentEnemy();
+        if (_currentEnemy) {
             Rotate();
             if (_fireTimer <= 0) {
                 Fire();
@@ -38,15 +38,28 @@ public class Tower : MonoBehaviour
         newProjectile.GetComponent<Projectile>().SetTarget(_currentEnemy);
     }
 
-    private void OnTriggerEnter2D(Collider2D col) {
-        int newEnemyPosition = col.gameObject.GetComponent<Enemy>().GetPosInWave();
-        int i;
-        for (i = 0; i < _enemiesInRange.Count; i++) {
-            if (_enemiesInRange[i].GetComponent<Enemy>().GetPosInWave() > newEnemyPosition) {
-                break;
-            }
+    private GameObject GetCurrentEnemy() {
+        if (_enemiesInRange.Count == 0) {
+            return null;
         }
-        _enemiesInRange.Insert(i, col.gameObject);
+        else {
+            float maxDist = _enemiesInRange[0].GetComponent<Enemy>().GetDistanceTraveled();
+            GameObject maxEnemy = _enemiesInRange[0];
+            for (int i = 1; i < _enemiesInRange.Count; i++) {
+                float dist = _enemiesInRange[i].GetComponent<Enemy>().GetDistanceTraveled();
+                if (dist > maxDist) {
+                    maxDist = dist;
+                    maxEnemy = _enemiesInRange[i];
+                }
+            }
+            return maxEnemy;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D col) {
+        if (col.gameObject.GetComponent<Enemy>() && !_enemiesInRange.Contains(col.gameObject)) {
+            _enemiesInRange.Add(col.gameObject);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D col) {
