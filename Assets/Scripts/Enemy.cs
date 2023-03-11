@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public enum EnemyType {None, PacMan, Sonic, Mario, Pokemon}
+
+    [SerializeField] private EnemyType Type;
     [SerializeField] private float BaseSpeed;
     private float CurrentSpeed;
     [SerializeField] private float MaxHealth;
@@ -37,6 +40,7 @@ public class Enemy : MonoBehaviour
             }
             else {
                 ReachedEnd?.Invoke();
+                transform.parent.GetComponent<Spawner>().DecreaseTypeCount(Type);
                 UnityEngine.Object.Destroy(this.gameObject);
             }
         }
@@ -49,9 +53,10 @@ public class Enemy : MonoBehaviour
     public void DealDamage(float damage) {
         CurrentHealth -= damage;
         if (CurrentHealth < 0) {
-            UnityEngine.Object.Destroy(this.gameObject);
             int coins = (int) UnityEngine.Random.Range((BaseSpeed+MaxHealth)*0.5f, (BaseSpeed+MaxHealth)*0.75f);
             DropCoins?.Invoke(coins);
+            transform.parent.GetComponent<Spawner>().DecreaseTypeCount(Type);
+            UnityEngine.Object.Destroy(this.gameObject);
         }
     }
 
@@ -61,5 +66,9 @@ public class Enemy : MonoBehaviour
 
     public int GetPosInWave() {
         return _posInWave;
+    }
+
+    public EnemyType GetEnemyType() {
+        return Type;
     }
 }

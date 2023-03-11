@@ -24,8 +24,11 @@ public class Spawner : MonoBehaviour
     private int _enemiesSpawned = 0;
     private int _currentWave = 0;
     private bool _waitingForNextWave = true;
+    private int[] _typeCounters = {0, 0, 0, 0, 0};
 
     public static event Action WaveOver;
+    public static event Action<Enemy.EnemyType> IntroduceType;
+    public static event Action<Enemy.EnemyType> TypeGone;
 
     private void Start() {
         _waypoint = GetComponent<Waypoint>();
@@ -61,6 +64,11 @@ public class Spawner : MonoBehaviour
         enemyComponent.Waypoint = _waypoint;
         enemyComponent.AssignPosInWave(_enemiesSpawned);
         newEnemy.SetActive(true);
+        Enemy.EnemyType type = enemyComponent.GetEnemyType();
+        _typeCounters[(int)type] = _typeCounters[(int)type] + 1;
+        if (_typeCounters[(int)type] == 1) {
+            IntroduceType?.Invoke(type);
+        }
     }
 
     private GameObject GetEnemyChoice() {
@@ -82,5 +90,12 @@ public class Spawner : MonoBehaviour
     public void StartWave() {
         _enemiesSpawned = 0;
         _waitingForNextWave = false;
+    }
+
+    public void DecreaseTypeCount(Enemy.EnemyType type) {
+        _typeCounters[(int)type] = _typeCounters[(int)type] - 1;
+        if (_typeCounters[(int)type] == 0) {
+            TypeGone?.Invoke(type);
+        }
     }
 }
