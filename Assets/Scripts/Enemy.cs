@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     public Waypoint Waypoint {get; set;}
 
     private int _currentWaypointIndex = 1;
+    private int _posInWave;
     private SpriteRenderer _spriteRenderer;
 
     public static event Action<int> DropCoins;
@@ -35,8 +36,8 @@ public class Enemy : MonoBehaviour
                 _currentWaypointIndex++;
             }
             else {
-                UnityEngine.Object.Destroy(this.gameObject);
                 ReachedEnd?.Invoke();
+                UnityEngine.Object.Destroy(this.gameObject);
             }
         }
     }
@@ -52,5 +53,13 @@ public class Enemy : MonoBehaviour
             int coins = (int) UnityEngine.Random.Range((BaseSpeed+MaxHealth)*0.5f, (BaseSpeed+MaxHealth)*0.75f);
             DropCoins?.Invoke(coins);
         }
+    }
+
+    public void AssignPosInWave(int position) {
+        _posInWave = position;
+    }
+
+    public int GetPosInWave() {
+        return _posInWave;
     }
 }

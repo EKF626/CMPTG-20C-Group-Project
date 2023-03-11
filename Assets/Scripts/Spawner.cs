@@ -7,15 +7,15 @@ using UnityEngine;
 public class WaveData 
 {
     public int NumEnemies;
-    public float MinSpawnTime;
-    public float MaxSpawnTime;
+    public int MinSpawnTime;
+    public int MaxSpawnTime;
     public GameObject[] EnemyPrefabs;
     public float[] Probabilities;
 }
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] float InitialDelay;
+    [SerializeField] private float tempoUnit;
 
     public WaveData[] WaveData;
 
@@ -35,7 +35,8 @@ public class Spawner : MonoBehaviour
         _spawnTimer -= Time.deltaTime;
         if (_spawnTimer <= 0f && !_waitingForNextWave) {
             if (_enemiesSpawned < WaveData[_currentWave].NumEnemies) {
-                _spawnTimer = UnityEngine.Random.Range(WaveData[_currentWave].MinSpawnTime, WaveData[_currentWave].MaxSpawnTime);
+                int spawnTimeUnit = UnityEngine.Random.Range(WaveData[_currentWave].MinSpawnTime, WaveData[_currentWave].MaxSpawnTime);
+                _spawnTimer = tempoUnit*spawnTimeUnit;
                 _enemiesSpawned++;
                 SpawnEnemy();
             }
@@ -56,7 +57,9 @@ public class Spawner : MonoBehaviour
         GameObject newEnemy = Instantiate(GetEnemyChoice());
         newEnemy.transform.SetParent(transform);
         newEnemy.transform.position = _waypoint.GetWaypointPosition(0);
-        newEnemy.GetComponent<Enemy>().Waypoint = _waypoint;
+        Enemy enemyComponent = newEnemy.GetComponent<Enemy>();
+        enemyComponent.Waypoint = _waypoint;
+        enemyComponent.AssignPosInWave(_enemiesSpawned);
         newEnemy.SetActive(true);
     }
 
