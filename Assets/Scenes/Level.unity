@@ -2916,6 +2916,7 @@ MonoBehaviour:
     - 0.2
     - 0.2
     - 0.2
+  MusicManager: {fileID: 1060529929}
 --- !u!114 &1119336744
 MonoBehaviour:
   m_ObjectHideFlags: 0

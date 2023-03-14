@@ -14,7 +14,7 @@ public class MusicManager : MonoBehaviour
         //Called every frame  <----
     }
 
-    private void IntroduceType(Enemy.EnemyType type) {
+    public void IntroduceType(Enemy.EnemyType type) {
         switch(type) {
             case Enemy.EnemyType.PacMan:
                 // Start PacMan theme  <----
@@ -31,8 +31,8 @@ public class MusicManager : MonoBehaviour
         }
     }
 
-    private void TypeGone(Enemy.EnemyType type) {
-       switch(type) {
+    public void TypeGone(Enemy.EnemyType type) {
+        switch(type) {
             case Enemy.EnemyType.PacMan:
                 // End PacMan theme  <----
                 break;
@@ -46,15 +46,5 @@ public class MusicManager : MonoBehaviour
                 // End Pokemon theme  <----
                 break;
         }
-    }
-
-    private void onEnable() {
-        Spawner.IntroduceType += IntroduceType;
-        Spawner.TypeGone += TypeGone;
-    }
-
-    private void OnDisable () {
-        Spawner.IntroduceType -= IntroduceType;
-        Spawner.TypeGone -= TypeGone;
     }
 }

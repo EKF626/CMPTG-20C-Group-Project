@@ -19,6 +19,8 @@ public class Spawner : MonoBehaviour
 
     public WaveData[] WaveData;
 
+    [SerializeField] private MusicManager MusicManager;
+
     private Waypoint _waypoint;
     private float _spawnTimer = 0;
     private int _enemiesSpawned = 0;
@@ -27,8 +29,6 @@ public class Spawner : MonoBehaviour
     private int[] _typeCounters = {0, 0, 0, 0, 0};
 
     public static event Action WaveOver;
-    public static event Action<Enemy.EnemyType> IntroduceType;
-    public static event Action<Enemy.EnemyType> TypeGone;
 
     private void Start() {
         _waypoint = GetComponent<Waypoint>();
@@ -66,7 +66,7 @@ public class Spawner : MonoBehaviour
         Enemy.EnemyType type = enemyComponent.GetEnemyType();
         _typeCounters[(int)type] = _typeCounters[(int)type] + 1;
         if (_typeCounters[(int)type] == 1) {
-            IntroduceType?.Invoke(type);
+            MusicManager.IntroduceType(type);
         }
     }
 
@@ -94,7 +94,7 @@ public class Spawner : MonoBehaviour
     public void DecreaseTypeCount(Enemy.EnemyType type) {
         _typeCounters[(int)type] = _typeCounters[(int)type] - 1;
         if (_typeCounters[(int)type] == 0) {
-            TypeGone?.Invoke(type);
+            MusicManager.TypeGone(type);
         }
     }
 }
