@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,8 @@ public class LevelManager : MonoBehaviour
 
     private int _coins;
     private int _lives;
+
+    public static event Action Lose;
 
     private void Start() {
         _coins = StartingCoins;
@@ -29,6 +32,9 @@ public class LevelManager : MonoBehaviour
 
     public void TakeDamage() {
         _lives -= 1;
+        if (_lives <= 0) {
+            Lose?.Invoke();
+        }
     }
 
     private void OnEnable() {

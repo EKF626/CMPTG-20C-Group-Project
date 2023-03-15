@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Type: 1
   BaseSpeed: 30
-  MaxHealth: 30
+  MaxHealth: 50
 --- !u!58 &3214237316916085773
 CircleCollider2D:
   m_ObjectHideFlags: 0

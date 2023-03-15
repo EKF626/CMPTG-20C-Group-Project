@@ -48,10 +48,12 @@ public class Enemy : MonoBehaviour
     private void NextWaypoint() {
         if (_currentWaypointIndex < Waypoint.Points.Length-1) {
             _currentWaypointIndex++;
-            if (CurrentPointPosition.x > transform.position.x) {
-                _animator.SetTrigger("Right");
-            } else {
-                _animator.SetTrigger("Left");
+            if (_animator) {
+                if (CurrentPointPosition.x > transform.position.x) {
+                    _animator.SetTrigger("Right");
+                } else {
+                    _animator.SetTrigger("Left");
+                }
             }
         }
         else {
@@ -64,7 +66,7 @@ public class Enemy : MonoBehaviour
     public void DealDamage(float damage) {
         _currentHealth -= damage;
         if (_currentHealth < 0) {
-            int coins = (int) UnityEngine.Random.Range((BaseSpeed+MaxHealth)*0.5f, (BaseSpeed+MaxHealth)*0.75f);
+            int coins = (int) UnityEngine.Random.Range((BaseSpeed+MaxHealth)*0.12f, (BaseSpeed+MaxHealth)*0.7f);
             DropCoins?.Invoke(coins);
             transform.parent.GetComponent<Spawner>().DecreaseTypeCount(Type);
             UnityEngine.Object.Destroy(this.gameObject);

@@ -27,30 +27,35 @@ public class Spawner : MonoBehaviour
     private int _currentWave = 0;
     private bool _waitingForNextWave = true;
     private int[] _typeCounters = {0, 0, 0, 0, 0};
+    private bool _playing = true;
 
     public static event Action WaveOver;
+    public static event Action Win;
 
     private void Start() {
         _waypoint = GetComponent<Waypoint>();
     }
 
     private void Update() {
-        _spawnTimer -= Time.deltaTime;
-        if (_spawnTimer <= 0f && !_waitingForNextWave) {
-            if (_enemiesSpawned < WaveData[_currentWave].NumEnemies) {
-                int spawnTimeUnit = UnityEngine.Random.Range(WaveData[_currentWave].MinSpawnTime, WaveData[_currentWave].MaxSpawnTime);
-                _spawnTimer = tempoUnit*spawnTimeUnit;
-                _enemiesSpawned++;
-                SpawnEnemy();
-            }
-            else if (transform.childCount == 0) {
-                if (_currentWave < WaveData.Length - 1) {
-                    _currentWave++;
-                    _waitingForNextWave = true;
-                    WaveOver?.Invoke();
+        if (_playing) {
+            _spawnTimer -= Time.deltaTime;
+            if (_spawnTimer <= 0f && !_waitingForNextWave) {
+                if (_enemiesSpawned < WaveData[_currentWave].NumEnemies) {
+                    int spawnTimeUnit = UnityEngine.Random.Range(WaveData[_currentWave].MinSpawnTime, WaveData[_currentWave].MaxSpawnTime);
+                    _spawnTimer = tempoUnit*spawnTimeUnit;
+                    _enemiesSpawned++;
+                    SpawnEnemy();
                 }
-                else {
-                    //That's the end.
+                else if (transform.childCount == 0) {
+                    if (_currentWave < WaveData.Length - 1) {
+                        _currentWave++;
+                        _waitingForNextWave = true;
+                        WaveOver?.Invoke();
+                    }
+                    else {
+                        Win?.Invoke();
+                        Done();
+                    }
                 }
             }
         }
@@ -96,5 +101,23 @@ public class Spawner : MonoBehaviour
         if (_typeCounters[(int)type] == 0) {
             MusicManager.TypeGone(type);
         }
+    }
+
+    private void Done() {
+        _playing = false;
+        // for (int i = 0; i < transform.childCount; i++) {
+        //     UnityEngine.Object.Destroy(transform.GetChild(0).gameObject);
+        // }
+        foreach (Transform child in transform) {
+            UnityEngine.Object.Destroy(child.gameObject);
+        }
+    }
+    
+    private void OnEnable() {
+        LevelManager.Lose += Done;
+    }
+
+    private void OnDisable() {
+        LevelManager.Lose -= Done;
     }
 }
